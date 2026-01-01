@@ -7,7 +7,8 @@ Test/
 bin/
 lib/
 install/
-
+Modifications_in code for slmSlicer over libslic3r.docx
+LibSLM Documentation.odt
 # CMake
 CMakeCache.txt
 CMakeFiles/
