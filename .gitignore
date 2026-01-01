@@ -1,0 +1,47 @@
+# Build folders
+build/
+build-*/
+out/
+output/
+Test/
+bin/
+lib/
+install/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Qt
+*.pro.user
+*.qmlc
+moc_*
+ui_*
+qrc_*
+
+# Visual Studio
+.vs/
+.vscode/
+*.sln
+*.vcxproj*
+*.VC.db
+*.VC.opendb
+*.user
+*.suo
+
+# Compiler output
+*.o
+*.obj
+*.exe
+*.dll
+*.pdb
+*.ilk
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+.DS_Store

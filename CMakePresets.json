@@ -1,0 +1,153 @@
+﻿{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "x64-mingw-vcpkg-static",
+      "displayName": "Windows x64 Ninja (MinGW, vcpkg)",
+      "hidden": false,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-mingw",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install-mingw",
+        "VCPKG_FEATURE_FLAGS": "manifests",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "environment": {
+        "CC": "gcc",
+        "CXX": "g++"
+      }
+    },
+    {
+      "name": "mingw-makefiles-x64",
+      "displayName": "MinGW Makefiles x64",
+      "hidden": false,
+      "generator": "MinGW Makefiles",
+      "binaryDir": "${sourceDir}/build-mingw-makefiles-x64",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install-mingw-makefiles-x64",
+        "VCPKG_FEATURE_FLAGS": "manifests",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "environment": {
+        "CC": "gcc",
+        "CXX": "g++"
+      }
+    },
+    {
+      "name": "mingw-static-ninja",
+      "displayName": "MinGW Static - Ninja",
+      "hidden": false,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-mingw-static",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install-mingw-static",
+        "VCPKG_FEATURE_FLAGS": "manifests",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "BUILD_SHARED_LIBS": "OFF"
+      },
+      "environment": {
+        "CC": "gcc",
+        "CXX": "g++"
+      }
+    },
+    {
+      "name": "mingw-static-debug",
+      "displayName": "MinGW Static - Debug",
+      "hidden": false,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-mingw-static-debug",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-static",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/install-mingw-static-debug",
+        "VCPKG_FEATURE_FLAGS": "manifests",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "BUILD_SHARED_LIBS": "OFF"
+      },
+      "environment": {
+        "CC": "gcc",
+        "CXX": "g++"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "mingw-makefiles-x64",
+      "configurePreset": "mingw-makefiles-x64"
+    },
+    {
+      "name": "mingw-makefiles-install",
+      "configurePreset": "mingw-makefiles-x64",
+      "targets": [ "install" ]
+    },
+    {
+      "name": "mingw-static-ninja",
+      "configurePreset": "mingw-static-ninja"
+    },
+    {
+      "name": "mingw-static-ninja-install",
+      "configurePreset": "mingw-static-ninja",
+      "targets": [ "install" ]
+    },
+    {
+      "name": "mingw-static-debug",
+      "configurePreset": "mingw-static-debug"
+    },
+    {
+      "name": "mingw-static-debug-install",
+      "configurePreset": "mingw-static-debug",
+      "targets": [ "install" ]
+    }
+  ],
+  "packagePresets": [
+    {
+      "name": "mingw-static-release",
+      "configurePreset": "mingw-static-ninja",
+      "configurations": [ "Release" ]
+    },
+    {
+      "name": "mingw-static-debug",
+      "configurePreset": "mingw-static-debug",
+      "configurations": [ "Debug" ]
+    },
+    {
+      "name": "mingw-makefiles-release",
+      "configurePreset": "mingw-makefiles-x64",
+      "configurations": [ "Release" ]
+    }
+  ]
+}
