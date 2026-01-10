@@ -1,4 +1,4 @@
-# DMLSV_DLL_V4.0 Slicer Library
+#  DMLS Slicer-Library
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Platform: Windows](https://img.shields.io/badge/Platform-Windows-blue)
