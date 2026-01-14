@@ -1,4 +1,3 @@
-
 #include "ExportMarcSlice.hpp"
 #include <iostream>
 #include "../libslic3r/Surface.hpp"
@@ -6,19 +5,11 @@
 
 namespace Marc{
 
- // Default constructor
-ExportMarcSlice::ExportMarcSlice()
-: origin()  // Calls Point's default constructor (should initialize to 0,0)
-{}
+// Constructors are now in the header with default implementation
 
-// Constructor with parameters for origin
-ExportMarcSlice::ExportMarcSlice(const Marc::Point& _origin)
-: origin(_origin)  // Uses Point's initializer list constructor
-{}
-
-    void
-    ExportMarcSlice::convrt(const Slic3r::Line &line, Line &m_line)
-    {
+void
+ExportMarcSlice::convrt(const Slic3r::Line &line, Line &m_line)
+{
 
         Point a;
         Point b;
@@ -192,7 +183,6 @@ ExportMarcSlice::Close()
 {
  
 }
-
 
 //void ExportMarcSlice::m_convert()
 //{// make m-point

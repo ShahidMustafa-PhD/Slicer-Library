@@ -1,4 +1,3 @@
-
 #include "MarcFile.hpp"
 #include <filesystem> // Required for std::filesystem
 
@@ -366,7 +365,7 @@ void Marc::MarcFile::processLayerRegions(const Slic3r::Layer* layer, Layer& marc
  * 
  * @param hatches Vector of SlmHatch objects
  * @param marcLayer Output layer to populate
- * @param converter Geometry converter
+ * @param converter Geometry converter for Slic3r to Marc type conversion
  */
 void Marc::MarcFile::processHatches(const std::vector<SlmHatch>& hatches, Layer& marcLayer,
                                      std::unique_ptr<ExportMarcSlice>& converter) {
@@ -376,13 +375,11 @@ void Marc::MarcFile::processHatches(const std::vector<SlmHatch>& hatches, Layer&
         converter->convrt(hatch.lines(), m_lines);
 
         // Create Marc hatch structure
-        Marc::Hatch m_hatch;
-        m_hatch.tag.type = 1;//static_cast<uint32_t>(hatch.type);  // Hatch type (from ThermalSegmentType)
-        m_hatch.tag.category = 1;  // Category 1 = hatch
+        Marc::Hatch m_hatch(GeometryType::CoreHatch);  // Type-safe construction
         m_hatch.tag.pointCount = static_cast<uint32_t>(m_lines.size() * 2);  // 2 points per line
-        m_hatch.lines = m_lines;
+        m_hatch.lines = std::move(m_lines);  // Move semantics for efficiency
 
-        marcLayer.hatches.push_back(m_hatch);
+        marcLayer.hatches.push_back(std::move(m_hatch));
     }
 }
 
@@ -422,23 +419,19 @@ void Marc::MarcFile::processExtrusionEntity(const Slic3r::ExtrusionEntity* entit
 
     // Handle ExtrusionPath (single polyline segment)
     if (const Slic3r::ExtrusionPath* path = dynamic_cast<const Slic3r::ExtrusionPath*>(entity)) {
-        Marc::Polyline m_polyline;
+        Marc::Polyline m_polyline(GeometryType::Perimeter);  // Type-safe construction
         converter->convrt(path->polyline, m_polyline);
-        m_polyline.tag.type = 2;//static_cast<uint32_t>(path->extrusion_role);  // Role type
-        m_polyline.tag.category = 2;  // Category 2 = polyline
         m_polyline.tag.pointCount = static_cast<uint32_t>(m_polyline.points.size());
-        marcLayer.polylines.push_back(m_polyline);
+        marcLayer.polylines.push_back(std::move(m_polyline));
     }
     // Handle ExtrusionLoop (closed contour)
     else if (const Slic3r::ExtrusionLoop* loop = dynamic_cast<const Slic3r::ExtrusionLoop*>(entity)) {
         // Process each path within the loop
         for (const Slic3r::ExtrusionPath& path : loop->paths) {
-            Marc::Polyline m_polyline;
+            Marc::Polyline m_polyline(GeometryType::Perimeter);
             converter->convrt(path.polyline, m_polyline);
-            m_polyline.tag.type = 2;//static_cast<uint32_t>(path.extrusion_role);
-            m_polyline.tag.category = 2;  // Category 2 = polyline
             m_polyline.tag.pointCount = static_cast<uint32_t>(m_polyline.points.size());
-            marcLayer.polylines.push_back(m_polyline);
+            marcLayer.polylines.push_back(std::move(m_polyline));
         }
     }
     // Handle ExtrusionEntityCollection (recursive call)
@@ -468,21 +461,17 @@ void Marc::MarcFile::processSurfaceCollection(const Slic3r::SurfaceCollection& s
 
         // Convert contour (outer boundary)
         Slic3r::Polygon contour_poly = expolygon.contour;
-        Marc::Polygon m_contour_poly;
+        Marc::Polygon m_contour_poly(GeometryType::SupportStructure);  // Type-safe construction
         converter->convrt(contour_poly, m_contour_poly);
-        m_contour_poly.tag.type = static_cast<uint32_t>(surface.surface_type);  // Surface type
-        m_contour_poly.tag.category = 3;  // Category 3 = polygon
         m_contour_poly.tag.pointCount = static_cast<uint32_t>(m_contour_poly.points.size());
-        marcLayer.polygons.push_back(m_contour_poly);
+        marcLayer.polygons.push_back(std::move(m_contour_poly));
 
         // Convert holes (inner boundaries)
         for (const Slic3r::Polygon& hole : expolygon.holes) {
-            Marc::Polygon m_hole_poly;
+            Marc::Polygon m_hole_poly(GeometryType::SupportStructure);
             converter->convrt(hole, m_hole_poly);
-            m_hole_poly.tag.type = static_cast<uint32_t>(surface.surface_type);
-            m_hole_poly.tag.category = 3;  // Category 3 = polygon
             m_hole_poly.tag.pointCount = static_cast<uint32_t>(m_hole_poly.points.size());
-            marcLayer.polygons.push_back(m_hole_poly);
+            marcLayer.polygons.push_back(std::move(m_hole_poly));
         }
     }
 }
@@ -655,8 +644,6 @@ std::string MarcFile::surface_color(Slic3r::Surface* surface) const
     
     return "darkmagenta";
 }
-
-
 
 
 
