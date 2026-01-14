@@ -145,13 +145,12 @@ struct Layer {
 
 /// @brief Converts Slic3r geometry types to Marc binary format structures
 /// @note Non-owning observer of data; does not manage Slic3r object lifetimes
+/// @note Thread-safe for read operations (all conversions are const)
 class ExportMarcSlice {
 public:
-    Point origin;  // Reference coordinate system origin
-    
     // Constructors
-    ExportMarcSlice() noexcept : origin{0.0f, 0.0f} {}
-    explicit ExportMarcSlice(const Point& _origin) noexcept : origin(_origin) {}
+    ExportMarcSlice() noexcept : origin_{0.0f, 0.0f} {}
+    explicit ExportMarcSlice(const Point& origin) noexcept : origin_(origin) {}
     
     // Rule of Zero: Compiler-generated special members are correct
     ~ExportMarcSlice() = default;
@@ -160,25 +159,28 @@ public:
     ExportMarcSlice(ExportMarcSlice&&) noexcept = default;
     ExportMarcSlice& operator=(ExportMarcSlice&&) noexcept = default;
     
-    // Conversion methods (non-owning observers of Slic3r data)
-    void convrt(const Slic3r::Line& line, Line& m_line);
-    void convrt(const Slic3r::Lines& lines, std::vector<Line>& m_lines);
-    void convrt(const Slic3r::ExPolygon& expolygon, std::vector<Polygon>& m_polygons);
-    void convrt(const Slic3r::ExPolygons& expolygons, std::vector<Polygon>& m_polygons);
-    void convrt(const Slic3r::Surface& surface, std::vector<Polygon>& m_polygons);
-    void convrt(const Slic3r::Surfaces& surfaces, std::vector<Polygon>& m_polygons);
-    void convrt(const Slic3r::Polygon& polygon, Polygon& m_polygon);
+    /// @brief Get the current coordinate system origin (read-only)
+    [[nodiscard]] const Point& origin() const noexcept { return origin_; }
+    
+    // Conversion methods (now all const-correct)
+    void convrt(const Slic3r::Line& line, Line& m_line) const;
+    void convrt(const Slic3r::Lines& lines, std::vector<Line>& m_lines) const;
+    void convrt(const Slic3r::ExPolygon& expolygon, std::vector<Polygon>& m_polygons) const;
+    void convrt(const Slic3r::ExPolygons& expolygons, std::vector<Polygon>& m_polygons) const;
+    void convrt(const Slic3r::Surface& surface, std::vector<Polygon>& m_polygons) const;
+    void convrt(const Slic3r::Surfaces& surfaces, std::vector<Polygon>& m_polygons) const;
+    void convrt(const Slic3r::Polygon& polygon, Polygon& m_polygon) const;
     void convrt(const Slic3r::MultiPoint& mp, Polyline& m_polyline) const;
-    void convrt(const Slic3r::Polygons& polygons, std::vector<Polygon>& m_polygons);
-    void convrt(const Slic3r::Polyline& polyline, Polyline& m_polyline);
-    void convrt(const Slic3r::Polylines& polylines, std::vector<Polyline>& m_polylines);
-    void convrt(const Slic3r::Point& point, Point& m_point);
-    void convrt(const Slic3r::Points& points, std::vector<Point>& m_points);
+    void convrt(const Slic3r::Polygons& polygons, std::vector<Polygon>& m_polygons) const;
+    void convrt(const Slic3r::Polyline& polyline, Polyline& m_polyline) const;
+    void convrt(const Slic3r::Polylines& polylines, std::vector<Polyline>& m_polylines) const;
+    void convrt(const Slic3r::Point& point, Point& m_point) const;
+    void convrt(const Slic3r::Points& points, std::vector<Point>& m_points) const;
     
     void Close();  // Finalization hook (currently unused, reserved for future use)
 
 private:
-    std::string filename;  // Reserved for future file association
+    const Point origin_;  // Immutable coordinate system origin
 };
 
 } // namespace Marc
