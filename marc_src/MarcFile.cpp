@@ -1,6 +1,7 @@
 #include "MarcFile.hpp"
 #include <filesystem> // Required for std::filesystem
 
+namespace fs = std::filesystem;
 
 namespace Marc {
 // Write binary .marc file
@@ -174,7 +175,7 @@ int MarcFile::generateSvg( std::string filename)
 // Function to iterate through the layers and generate SVG for each layer
 void MarcFile::generateSVGForMarcFile(const std::string& outputDir) 
 {
-    std::filesystem::create_directories(outputDir);  // Ensure output directory exists
+    fs::create_directories(outputDir);  // Ensure output directory exists
 
     for (const auto& layer : m_layers) {
         std::string outputPath = outputDir + "/layer" + std::to_string(layer.layerNumber) + ".svg";
